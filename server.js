@@ -1,12 +1,19 @@
 import express from "express"
 import bodyParser from "body-parser";
 import morgan from "morgan"
+import dotEnv from "dotenv"
+dotEnv.config()
 
 const app = express()
+
+import connectDB from "./config/datebase.js";
 
 import productRoute from "./routes/product.js"
 import orderRoute from "./routes/order.js"
 
+
+// datebase 연결
+connectDB()
 
 // middleware 설정
 app.use(morgan("dev"))
@@ -21,7 +28,7 @@ app.use("/order", orderRoute)
 
 
 
-const port = 8888
+const port = process.env.PORT || 7777
 
 app.listen(port, console.log("server started"))
 
