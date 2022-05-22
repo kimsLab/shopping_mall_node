@@ -2,12 +2,15 @@ import express from "express"
 
 const app = express()
 
+import productRoute from "./routes/product.js"
+import orderRoute from "./routes/order.js"
 
-app.get("/", (req, res) => {
-    res.json({
-        icon: "my first api"
-    })
-})
+
+
+// router
+app.use("/product", productRoute)
+app.use("/order", orderRoute)
+
 
 
 
