@@ -11,8 +11,19 @@ router.get("/", (req,res) => {
 
 // order 데이터를 등록하는 api
 router.post("/", (req,res) => {
+
+    const newOrder = {
+        number: req.body.number,
+        color: req.body.color,
+        title: req.body.title,
+        description: req.body.desc
+    }
+
+
+
     res.json({
-        msg: "order post"
+        msg: "order post",
+        orderInfo: newOrder
     })
 })
 
