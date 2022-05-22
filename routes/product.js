@@ -1,4 +1,6 @@
 import express from "express";
+import asyncHandler from "express-async-handler";
+import productModel from "../model/product.js"
 
 const router = express.Router()
 
@@ -13,19 +15,23 @@ router.get("/", (req, res) => {
 })
 
 // product 데이터를 등록해주는 api
-router.post("/", (req, res) => {
+router.post("/", asyncHandler(async (req, res) => {
 
-    const userInput = {
+
+    const newProduct = new productModel({
         name: req.body.name,
         price: req.body.price,
-        qty: req.body.quantity,
-    }
+        brand: req.body.brand,
+        category: req.body.cate,
+    })
+
+    await newProduct.save()
 
     res.json({
         msg: "created product",
-        newproduct: userInput
+        productInfo: newProduct
     })
-})
+}))
 
 // product 데이터를 수정하는 api
 router.put("/", (req, res) => {
