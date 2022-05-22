@@ -1,5 +1,6 @@
 import express from "express"
 import bodyParser from "body-parser";
+import morgan from "morgan"
 
 const app = express()
 
@@ -8,6 +9,7 @@ import orderRoute from "./routes/order.js"
 
 
 // middleware 설정
+app.use(morgan("dev"))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
