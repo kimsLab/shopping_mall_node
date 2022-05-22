@@ -8,11 +8,16 @@ const router = express.Router()
 // CRUD create, read, update, delete 뜻하는 용어
 
 // product 데이터 가져오는 api
-router.get("/", (req, res) => {
+router.get("/", asyncHandler(async (req, res) => {
+
+    const products = await productModel.find()
+
     res.json({
-        msg: "product get"
+        msg: "product get",
+        count: products.length,
+        products: products
     })
-})
+}))
 
 // product 데이터를 등록해주는 api
 router.post("/", asyncHandler(async (req, res) => {
