@@ -1,10 +1,15 @@
 import express from "express"
+import bodyParser from "body-parser";
 
 const app = express()
 
 import productRoute from "./routes/product.js"
 import orderRoute from "./routes/order.js"
 
+
+// middleware 설정
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 
 // router

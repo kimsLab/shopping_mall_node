@@ -14,8 +14,16 @@ router.get("/", (req, res) => {
 
 // product 데이터를 등록해주는 api
 router.post("/", (req, res) => {
+
+    const userInput = {
+        name: req.body.name,
+        price: req.body.price,
+        qty: req.body.quantity,
+    }
+
     res.json({
-        msg: "created product"
+        msg: "created product",
+        newproduct: userInput
     })
 })
 
