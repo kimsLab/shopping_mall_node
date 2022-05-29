@@ -16,7 +16,10 @@ import orderRoute from "./routes/order.js"
 connectDB()
 
 // middleware 설정
-app.use(morgan("dev"))
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"))
+}
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
