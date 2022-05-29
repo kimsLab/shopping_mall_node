@@ -7,7 +7,7 @@ const router = express.Router()
 
 // CRUD create, read, update, delete 뜻하는 용어
 
-// product 데이터 가져오는 api
+// 전체 product 데이터 가져오는 api
 router.get("/", asyncHandler(async (req, res) => {
 
     const products = await productModel.find()
@@ -18,6 +18,15 @@ router.get("/", asyncHandler(async (req, res) => {
         products: products
     })
 }))
+
+// 상세 product 데이터 가져오는 api
+router.get("/:productId", asyncHandler(async (req, res) => {
+    const id = req.params.productId
+    const product = await productModel.findById(id)
+    res.json(product)
+
+}))
+
 
 // product 데이터를 등록해주는 api
 router.post("/", asyncHandler(async (req, res) => {
@@ -45,11 +54,23 @@ router.put("/", (req, res) => {
     })
 })
 
-// product 데이터를 삭제하는 api
-router.delete("/", (req, res) => {
+// 상세 product 데이터를 삭제하는 api
+router.delete("/:productid", asyncHandler(async (req, res) => {
+   const id = req.params.productid
+    await productModel.findByIdAndRemove(id)
     res.json({
         msg: "deleted product"
     })
-})
+}))
 
+// 전체 product 데이터를 삭제하는 api
+router.delete("/", asyncHandler(async (req, res) => {
+    await productModel.deleteMany()
+    res.json({
+        msg: "deleted product model"
+    })
+
+
+
+}))
 export default router

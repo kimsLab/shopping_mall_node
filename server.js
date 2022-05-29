@@ -30,7 +30,7 @@ app.use("/order", orderRoute)
 
 const port = process.env.PORT || 7777
 
-app.listen(port, console.log("server started"))
+app.listen(port, console.log(`server started at ${port}`))
 
 
 // code build 순서(규칙)
