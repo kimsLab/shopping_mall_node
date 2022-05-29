@@ -1,46 +1,75 @@
 import express from "express";
+import asyncHandler from "express-async-handler";
+import orderModel from "../model/order.js"
 
 const router = express.Router()
 
-// order 데이터를 가져오는 api
-router.get("/", (req,res) => {
+// 전체 order 데이터를 가져오는 api
+router.get("/", asyncHandler(async (req,res) => {
+    const orders = await orderModel.find().populate('product', ['name', 'price', 'brand'])
     res.json({
-        msg: "order get"
+        msg: "order get",
+        orders: orders
     })
-})
+}))
+
+// 상세 order 데이터를 가져오는 api
+router.get("/:orderId", asyncHandler(async (req, res) => {
+    const id = req.params.orderId
+    const order = await orderModel.findById(id).populate('product')
+    res.json(order)
+}))
+
 
 // order 데이터를 등록하는 api
-router.post("/", (req,res) => {
+router.post("/", asyncHandler(async (req,res) => {
 
-    const newOrder = {
-        number: req.body.number,
-        color: req.body.color,
-        title: req.body.title,
-        description: req.body.desc
-    }
+    const newOrder = new orderModel({
+       product : req.body.product,
+        qty : req.body.qty,
+    })
 
+    await newOrder.save()
 
 
     res.json({
         msg: "order post",
         orderInfo: newOrder
     })
-})
+}))
 
 // order 데이터를 수정하는 api
-router.put("/", (req, res) => {
+router.put("/:orderId", asyncHandler(async (req, res) => {
+    const id = req.params.orderId
+    await orderModel.findByIdAndUpdate(id,{
+        product: req.body.porduct,
+        qty: req.body.qty,
+    })
+
     res.json({
         msg: "updated order"
     })
-})
+}))
 
-// order 데이터를 삭제하는 api
-router.delete("/", (req, res) => {
+// 상세 order 데이터를 삭제하는 api
+router.delete("/:orderId", asyncHandler(async (req, res) => {
+    const id = req.params.orderId
+    await orderModel.findByIdAndRemove(id)
     res.json({
         msg: "deleted oreder"
     })
-})
+}))
 
+// 전체 order 데이터를 삭제하는 api
+router.delete("/", asyncHandler(async (req, res) => {
+    await orderModel.deleteMany()
+    res.json({
+        msg: "deleted order model"
+    })
+
+
+
+}))
 
 
 
