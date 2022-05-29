@@ -48,11 +48,19 @@ router.post("/", asyncHandler(async (req, res) => {
 }))
 
 // product 데이터를 수정하는 api
-router.put("/", (req, res) => {
+router.put("/:productid", asyncHandler(async (req, res) => {
+    const id = req.params.productid
+    await productModel.findByIdAndUpdate(id, {
+        name: req.body.name,
+        price: req.body.price,
+        brand: req.body.brand,
+        category: req.body.category
+    })
+
     res.json({
         msg: "updated product"
     })
-})
+}))
 
 // 상세 product 데이터를 삭제하는 api
 router.delete("/:productid", asyncHandler(async (req, res) => {
