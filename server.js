@@ -10,6 +10,7 @@ import connectDB from "./config/datebase.js";
 
 import productRoute from "./routes/product.js"
 import orderRoute from "./routes/order.js"
+import userRoute from "./routes/user.js"
 
 
 // datebase 연결
@@ -27,6 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // router
 app.use("/product", productRoute)
 app.use("/order", orderRoute)
+app.use("/user", userRoute)
 
 
 
