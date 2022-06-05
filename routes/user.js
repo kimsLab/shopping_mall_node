@@ -4,6 +4,7 @@ import userModel from "../model/user.js"
 import bcrypt from "bcryptjs"
 import gravatar from "gravatar"
 import jwt from "jsonwebtoken"
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router()
 
@@ -83,6 +84,11 @@ router.post("/login", asyncHandler(async (req, res) => {
     }
 }))
 
+// 로그인한 사람의 정보 불러오기
+router.get("/", protect, asyncHandler(async (req, res) => {
+    res.json(req.user)
+
+}))
 
 
 

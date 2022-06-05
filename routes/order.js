@@ -1,6 +1,7 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
 import orderModel from "../model/order.js"
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router()
 
@@ -22,10 +23,11 @@ router.get("/:orderId", asyncHandler(async (req, res) => {
 
 
 // order 데이터를 등록하는 api
-router.post("/", asyncHandler(async (req,res) => {
+router.post("/", protect, asyncHandler(async (req,res) => {
 
     const newOrder = new orderModel({
        product : req.body.product,
+        user : req.user._id,
         qty : req.body.qty,
     })
 
