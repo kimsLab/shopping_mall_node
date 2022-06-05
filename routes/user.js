@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import userModel from "../model/user.js"
 import bcrypt from "bcryptjs"
 import gravatar from "gravatar"
+import jwt from "jsonwebtoken"
 
 const router = express.Router()
 
@@ -55,7 +56,7 @@ router.post("/signup", asyncHandler(async (req, res) => {
 
 //로그인
 router.post("/login", asyncHandler(async (req, res) => {
-    // email 유무 체크 -> 패스워드 복호화(패스워드 매칭)
+    // email 유무 체크 -> 패스워드 복호화(패스워드 매칭) -> jwt 생성 -> return jwt
     const user = await userModel.findOne({email: req.body.email})
 
     if (!user) {
@@ -71,7 +72,13 @@ router.post("/login", asyncHandler(async (req, res) => {
                 msg: "password is not matched"
             })
         } else {
-            res.json(user)
+            // jwt 생성
+            const token = await jwt.sign(
+                { id: user._id , name: user.name },
+                "appletom",
+                { expiresIn: "10000000000" }
+            )
+            res.json({token})
         }
     }
 }))
