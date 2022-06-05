@@ -8,8 +8,26 @@ import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router()
 
+
 //CRUD
+
+// 전체 유저 리스트(관리자만)
+router.get("/list", protect, asyncHandler(async (req, res) => {
+    if (req.user.role !== "admin") {
+        return res.json({
+            msg: "user is not admin"
+        })
+    }
+    const users = await userModel.find()
+    res.json(users)
+}))
+
+
+
+
+
 //회원가입
+
 router.post("/signup", asyncHandler(async (req, res) => {
 
     // email 유무 체크 -> 패스워드 암호화 -> 프로필 이미지 자동 생성
