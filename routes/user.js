@@ -55,7 +55,25 @@ router.post("/signup", asyncHandler(async (req, res) => {
 
 //로그인
 router.post("/login", asyncHandler(async (req, res) => {
+    // email 유무 체크 -> 패스워드 복호화(패스워드 매칭)
+    const user = await userModel.findOne({email: req.body.email})
 
+    if (!user) {
+        return res.json({
+            msg: "register not user"
+        })
+    } else {
+
+        const isMatched = await bcrypt.compare(req.body.password, user.password)
+
+        if (!isMatched) {
+            return res.json({
+                msg: "password is not matched"
+            })
+        } else {
+            res.json(user)
+        }
+    }
 }))
 
 
