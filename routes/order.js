@@ -22,8 +22,8 @@ router.get("/", protect, asyncHandler(async (req,res) => {
 
 // 상세 order 데이터를 가져오는 api
 router.get("/:orderId", protect, asyncHandler(async (req, res) => {
-    const id = req.params.orderId
-    const order = await orderModel.findById(id).populate('product')
+    const {orderId} = req.params
+    const order = await orderModel.findById(orderId).populate('product')
     if (order.user !== req.user._id) {
         return res.json({
             msg: " this order is not yours"
@@ -36,10 +36,11 @@ router.get("/:orderId", protect, asyncHandler(async (req, res) => {
 // order 데이터를 등록하는 api
 router.post("/", protect, asyncHandler(async (req,res) => {
 
+    const {product, qty} = req.body
     const newOrder = new orderModel({
-       product : req.body.product,
+       product,
         user : req.user._id,
-        qty : req.body.qty,
+        qty,
     })
 
     await newOrder.save()
@@ -55,6 +56,7 @@ router.post("/", protect, asyncHandler(async (req,res) => {
 router.put("/:orderId", protect, asyncHandler(async (req, res) => {
 
     const id = req.params.orderId
+    const {product, qty} = req.body
     const order = await orderModel.findById(req.params.orderId)
     console.log(order)
     if (order.user !== req.user._id) {
@@ -63,8 +65,8 @@ router.put("/:orderId", protect, asyncHandler(async (req, res) => {
         })
     }
     await orderModel.findByIdAndUpdate(id,{
-        product: req.body.porduct,
-        qty: req.body.qty,
+        product,
+        qty,
     })
 
     res.json({
@@ -74,8 +76,8 @@ router.put("/:orderId", protect, asyncHandler(async (req, res) => {
 
 // 상세 order 데이터를 삭제하는 api
 router.delete("/:orderId", asyncHandler(async (req, res) => {
-    const id = req.params.orderId
-    await orderModel.findByIdAndRemove(id)
+    const {orderId} = req.params
+    await orderModel.findByIdAndRemove(orderId)
     res.json({
         msg: "deleted oreder"
     })

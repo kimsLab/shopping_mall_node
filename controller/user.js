@@ -18,7 +18,9 @@ const signup = asyncHandler(async (req, res) => {
 
     // email 유무 체크 -> 패스워드 암호화 -> 프로필 이미지 자동 생성
 
-    const user = await userModel.findOne({email: req.body.email})
+    const {name, email, password} = req.body
+
+    const user = await userModel.findOne({ email })
 
     if (user) {
         return res.json({
@@ -28,10 +30,10 @@ const signup = asyncHandler(async (req, res) => {
     } else {
 
         // 패스워드 암호화
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        const hashedPassword = await bcrypt.hash(password, 10)
 
         // 프로필 이미지 제너레이터
-        const profileImg = await gravatar.url(req.body.email, {
+        const profileImg = await gravatar.url(email, {
             s: `200`,
             r: `pg`,
             d: `mm`,
@@ -40,10 +42,10 @@ const signup = asyncHandler(async (req, res) => {
 
 
         const newUser = new userModel({
-            name: req.body.name,
-            email: req.body.email,
+            name,
+            email,
             password: hashedPassword,
-            profileImg: profileImg
+            profileImg
         })
 
         await newUser.save()
@@ -59,8 +61,10 @@ const signup = asyncHandler(async (req, res) => {
 })
 
 const login = asyncHandler(async (req, res) => {
+
+    const {email, password} = req.body
     // email 유무 체크 -> 패스워드 복호화(패스워드 매칭) -> jwt 생성 -> return jwt
-    const user = await userModel.findOne({email: req.body.email})
+    const user = await userModel.findOne({ email })
 
     if (!user) {
         return res.json({
@@ -68,7 +72,7 @@ const login = asyncHandler(async (req, res) => {
         })
     } else {
 
-        const isMatched = await bcrypt.compare(req.body.password, user.password)
+        const isMatched = await bcrypt.compare(password, user.password)
 
         if (!isMatched) {
             return res.json({

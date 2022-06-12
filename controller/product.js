@@ -21,29 +21,31 @@ const getProduct = asyncHandler(async (req, res) => {
 
 const createProduct = asyncHandler(async (req, res) => {
 
+    const {name, price, brand, category} = req.body
 
     const newProduct = new productModel({
-        name: req.body.name,
-        price: req.body.price,
-        brand: req.body.brand,
-        category: req.body.cate,
+        name,
+        price,
+        brand,
+        category,
     })
 
     await newProduct.save()
 
     res.json({
         msg: "created product",
-        productInfo: newProduct
+        newProduct
     })
 })
 
 const updateProduct = asyncHandler(async (req, res) => {
     const id = req.params.productid
+    const {name, price, brand, category} = req.body
     await productModel.findByIdAndUpdate(id, {
-        name: req.body.name,
-        price: req.body.price,
-        brand: req.body.brand,
-        category: req.body.category
+        name,
+        price,
+        brand,
+        category
     })
 
     res.json({
