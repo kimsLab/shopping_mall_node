@@ -10,7 +10,7 @@ const protect = asyncHandler(async (req, res, next) => {
     ) {
         try {
             token = req.headers.authorization.split(` `)[1]
-            const decoded = jwt.verify(token, `appletom`)
+            const decoded = jwt.verify(token, process.env.SECRET_KEY)
             req.user = await userModel.findById(decoded.id)
             next()
         } catch (err) {

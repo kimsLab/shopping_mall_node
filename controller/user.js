@@ -1,7 +1,5 @@
 import asyncHandler from "express-async-handler";
 import userModel from "../model/user.js";
-import bcrypt from "bcryptjs";
-import gravatar from "gravatar";
 import jwt from "jsonwebtoken";
 
 const getUsers = asyncHandler(async (req, res) => {
@@ -29,23 +27,23 @@ const signup = asyncHandler(async (req, res) => {
 
     } else {
 
-        // 패스워드 암호화
-        const hashedPassword = await bcrypt.hash(password, 10)
-
-        // 프로필 이미지 제너레이터
-        const profileImg = await gravatar.url(email, {
-            s: `200`,
-            r: `pg`,
-            d: `mm`,
-            protocol: `https`
-        })
+        // // 패스워드 암호화
+        // const hashedPassword = await bcrypt.hash(password, 10)
+        //
+        // // 프로필 이미지 제너레이터
+        // const profileImg = await gravatar.url(email, {
+        //     s: `200`,
+        //     r: `pg`,
+        //     d: `mm`,
+        //     protocol: `https`
+        // })
 
 
         const newUser = new userModel({
             name,
             email,
-            password: hashedPassword,
-            profileImg
+            password,
+
         })
 
         await newUser.save()
@@ -72,7 +70,8 @@ const login = asyncHandler(async (req, res) => {
         })
     } else {
 
-        const isMatched = await bcrypt.compare(password, user.password)
+        // const isMatched = await bcrypt.compare(password, user.password)
+        const isMatched = await user.comparePassword(password)
 
         if (!isMatched) {
             return res.json({
@@ -82,7 +81,7 @@ const login = asyncHandler(async (req, res) => {
             // jwt 생성
             const token = await jwt.sign(
                 { id: user._id , name: user.name },
-                "appletom",
+                process.env.SECRET_KEY,
                 { expiresIn: "10000000000" }
             )
             res.json({token})
