@@ -6,7 +6,13 @@ import protect from "../middleware/authMiddleware.js";
 const router = express.Router()
 
 // 전체 order 데이터를 가져오는 api
-router.get("/", asyncHandler(async (req,res) => {
+router.get("/", protect, asyncHandler(async (req,res) => {
+    console.log(req.user)
+    if (req.user.role !== "admin") {
+        return res.json({
+            msg: "your is not admin"
+        })
+    }
     const orders = await orderModel.find().populate('product', ['name', 'price', 'brand'])
     res.json({
         msg: "order get",
@@ -15,9 +21,14 @@ router.get("/", asyncHandler(async (req,res) => {
 }))
 
 // 상세 order 데이터를 가져오는 api
-router.get("/:orderId", asyncHandler(async (req, res) => {
+router.get("/:orderId", protect, asyncHandler(async (req, res) => {
     const id = req.params.orderId
     const order = await orderModel.findById(id).populate('product')
+    if (order.user !== req.user._id) {
+        return res.json({
+            msg: " this order is not yours"
+        })
+    }
     res.json(order)
 }))
 
@@ -40,9 +51,17 @@ router.post("/", protect, asyncHandler(async (req,res) => {
     })
 }))
 
-// order 데이터를 수정하는 api
-router.put("/:orderId", asyncHandler(async (req, res) => {
+// order 데이터를 수정하는 api(에러 수정 필요)
+router.put("/:orderId", protect, asyncHandler(async (req, res) => {
+
     const id = req.params.orderId
+    const order = await orderModel.findById(req.params.orderId)
+    console.log(order)
+    if (order.user !== req.user._id) {
+        return res.json({
+            msg: "this order is not yours"
+        })
+    }
     await orderModel.findByIdAndUpdate(id,{
         product: req.body.porduct,
         qty: req.body.qty,
